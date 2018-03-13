@@ -329,7 +329,9 @@ def draw_labeled_bboxes(img, labels):
         nonzeroy = np.array(nonzero[0])
         nonzerox = np.array(nonzero[1])
         # Define a bounding box based on min/max x and y
-        bbox = ((np.min(nonzerox), np.min(nonzeroy)), (np.max(nonzerox), np.max(nonzeroy)))
+        #print(np.min(nonzerox))
+        #print(np.min(nonzerox))
+        bbox = ((np.min(nonzerox), np.min(nonzeroy)), (np.min(nonzerox)+100, np.min(nonzeroy)+65))
         # Draw the box on the image
         cv2.rectangle(img, bbox[0], bbox[1], (0,0,255), 6)
     # Return the image
@@ -408,8 +410,10 @@ def find_cars_opt(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell
             # Scale features and make a prediction
             #print(X_scaler)
             test_features = X_scaler.transform(np.hstack((spatial_features, hist_features, hog_features)).reshape(1, -1))
-            #test_features = X_scaler.transform(np.hstack((shape_feat, hist_feat)).reshape(1, -1))
-            test_prediction = svc.predict(test_features)
+            #test_features  X_scaler.transform(np.hstack((shape_feat, hist_feat)).reshape(1, -1))
+            #test_prediction = svc.predict(test_features)
+            dec = svc.decision_function(test_features)
+            test_prediction = int(dec > 0.75)
 
             if test_prediction == 1:
                 xbox_left = np.int(xleft*scale)
